@@ -43,8 +43,6 @@ export async function resendOtp(req: PayloadRequest): Promise<Response> {
             },
         })
 
-        console.log(`Resent OTP for ${email}: ${code}`)
-
         await req.payload.sendEmail?.({
             to: email,
             subject: 'Your verification code (Resent)',
@@ -52,7 +50,7 @@ export async function resendOtp(req: PayloadRequest): Promise<Response> {
         })
 
         const isProd = process.env.NODE_ENV === 'production'
-        return Response.json(isProd ? { ok: true } : { ok: true, code }, { status: 200 })
+        return Response.json(isProd ? { message: true } : { message: true, code }, { status: 200 })
     } catch (err) {
         req.payload.logger.error(err)
         return Response.json({ message: 'Failed to resend code' }, { status: 500 })

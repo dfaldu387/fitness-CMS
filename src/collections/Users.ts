@@ -1,15 +1,13 @@
-// src/collections/Users.ts
 import type { CollectionConfig } from 'payload'
-import { sendOtp } from '../api/users/send-otp'
-import { resendOtp } from '../api/users/resend-otp'
-import { verifyOtp } from '../api/users/verify-otp'
+import { customUserEndpoints } from '@/api/users'
+import { v4 as uuidv4 } from 'uuid'
 
 const Users: CollectionConfig = {
   slug: 'users',
   auth: { verify: true, maxLoginAttempts: 5 },
 
   admin: {
-    defaultColumns: ['id', 'email', 'name', 'role', 'updatedAt', '_verified'],
+    defaultColumns: ['id', 'userId', 'birthdate', 'email', 'name', 'role', 'updatedAt', '_verified'],
     useAsTitle: 'email',
   },
 
@@ -21,19 +19,21 @@ const Users: CollectionConfig = {
   },
 
   fields: [
+    { name: 'userId', type: 'text', unique: true, required: false, defaultValue: () => uuidv4(), admin: { readOnly: true }, },
     { name: 'name', type: 'text', required: true },
     { name: 'role', type: 'select', options: ['admin', 'editor', 'viewer'], required: true, defaultValue: 'viewer' },
+    { name: 'email', type: 'email', required: true, unique: true, },
+    { name: 'birthdate', type: 'date' },
+    { name: 'acceptedTerms', type: 'checkbox' },
+
+    // OTP-related hidden fields
     { name: 'emailOtpHash', type: 'text', admin: { hidden: true } },
     { name: 'emailOtpExpiresAt', type: 'date', admin: { hidden: true } },
     { name: 'emailOtpAttempts', type: 'number', defaultValue: 0, admin: { hidden: true } },
     { name: 'emailOtpLastSentAt', type: 'date', admin: { hidden: true } },
   ],
 
-  endpoints: [
-    { path: '/send-otp', method: 'post', handler: sendOtp },
-    { path: '/resend-otp', method: 'post', handler: resendOtp },
-    { path: '/verify-otp', method: 'post', handler: verifyOtp },
-  ],
+  endpoints: customUserEndpoints,
 }
 
 export default Users

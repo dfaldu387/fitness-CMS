@@ -121,8 +121,11 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  userId?: string | null;
   name: string;
   role: 'admin' | 'editor' | 'viewer';
+  birthdate?: string | null;
+  acceptedTerms?: boolean | null;
   emailOtpHash?: string | null;
   emailOtpExpiresAt?: string | null;
   emailOtpAttempts?: number | null;
@@ -174,8 +177,18 @@ export interface Profile {
   id: number;
   user: number | User;
   preferredName?: string | null;
-  gender?: ('male' | 'female' | 'other' | 'na') | null;
+  gender?: ('male' | 'female') | null;
   birthdate?: string | null;
+  location?: string | null;
+  extra?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -245,8 +258,11 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  userId?: T;
   name?: T;
   role?: T;
+  birthdate?: T;
+  acceptedTerms?: T;
   emailOtpHash?: T;
   emailOtpExpiresAt?: T;
   emailOtpAttempts?: T;
@@ -297,6 +313,8 @@ export interface ProfilesSelect<T extends boolean = true> {
   preferredName?: T;
   gender?: T;
   birthdate?: T;
+  location?: T;
+  extra?: T;
   updatedAt?: T;
   createdAt?: T;
 }
