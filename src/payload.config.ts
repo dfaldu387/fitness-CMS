@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import Users from './collections/Users'
 import { Media } from './collections/Media'
-import Profile from './collections/profile';
+import DataCollection from './collections/DataCollection';
 
 import { resendAdapter } from '@payloadcms/email-resend'
 
@@ -23,7 +23,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Profile],
+  collections: [Users, Media, DataCollection],
   email: resendAdapter({
     defaultFromAddress: process.env.EMAIL_FROM_ADDRESS!,
     defaultFromName: process.env.EMAIL_FROM_NAME!,

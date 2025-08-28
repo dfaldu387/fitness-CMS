@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload';
-import { createProfile } from '../api/profiles/createProfile';
+import { dataCollection } from '../api/profiles/dataCollectionApi';
 
-const Profile: CollectionConfig = {
+const DataCollection: CollectionConfig = {
   slug: 'profiles',
   admin: {
     useAsTitle: 'preferredName',
@@ -10,7 +10,7 @@ const Profile: CollectionConfig = {
   access: {
     create: ({ req }) => Boolean(req.user),
     read: ({ req }) => req.user?.role === 'admin' ? true : { user: { equals: req.user?.id } },
-    update: ({ req }) => req.user?.role === 'admin' ? true : { user: { equals: req.user?.id } },
+    update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => req.user?.role === 'admin' ? true : { user: { equals: req.user?.id } },
   },
   fields: [
@@ -38,8 +38,8 @@ const Profile: CollectionConfig = {
     ],
   },
   endpoints: [
-    { path: '/createProfile', method: 'post', handler: createProfile },
+    { path: '/dataCollection', method: 'post', handler: dataCollection },
   ],
 };
 
-export default Profile;
+export default DataCollection;
