@@ -1,11 +1,12 @@
 import type { PayloadHandler } from 'payload'
+import jwt from 'jsonwebtoken'
 
 export const signup: PayloadHandler = async (req) => {
     try {
         const body = await req.json()
         const { email, password, name, birthdate, acceptedTerms } = body
 
-        // 1️⃣ Validate input
+        //  Validate input
         if (!email || !password || !name) {
             return Response.json(
                 { success: false, message: 'Name, email, and password are required.' },
@@ -13,7 +14,7 @@ export const signup: PayloadHandler = async (req) => {
             )
         }
 
-        // 2️⃣ Check if user already exists
+        //  Check if user already exists
         const existingUser = await req.payload.find({
             collection: 'users',
             where: { email: { equals: email } },
@@ -31,7 +32,7 @@ export const signup: PayloadHandler = async (req) => {
             )
         }
 
-        // 3️⃣ Create user with _verified: false
+        //  Create user with _verified: false
         const newUser = await req.payload.create({
             collection: 'users',
             data: {
@@ -41,9 +42,24 @@ export const signup: PayloadHandler = async (req) => {
                 birthdate,
                 acceptedTerms,
                 _verified: false,
-                emailOtpAttempts: 0,
+                email_otp_attempts: 0,
             },
         })
+
+        // const SIGN_SECRET = process.env.PAYLOAD_SECRET || process.env.JWT_SECRET
+        // if (!SIGN_SECRET) {
+        //     return Response.json(
+        //         { success: false, message: 'Server misconfiguration: missing JWT secret' },
+        //         { status: 500 })
+        // }
+
+        // const tokenPayload = {
+        //     id: newUser.id,
+        //     collection: 'users',
+        //     email: newUser.email,
+        // }
+        // const expiresIn = process.env.SIGNUP_TOKEN_EXPIRES_IN || '7d'
+        // const token = jwt.sign(tokenPayload, SIGN_SECRET, { expiresIn })
 
         return Response.json({
             success: true,
@@ -54,6 +70,8 @@ export const signup: PayloadHandler = async (req) => {
                 email: newUser.email,
                 verified: newUser._verified,
             },
+            // token
+
         })
     } catch (err: any) {
         return Response.json(

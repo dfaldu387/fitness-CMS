@@ -19,7 +19,7 @@ export async function resendOtp(req: PayloadRequest): Promise<Response> {
         const now = Date.now()
 
         // Cooldown
-        const lastSent = user.emailOtpLastSentAt ? new Date(user.emailOtpLastSentAt).getTime() : 0
+        const lastSent = user.email_otp_last_sent_at ? new Date(user.email_otp_last_sent_at).getTime() : 0
         if (lastSent && now - lastSent < RESEND_COOLDOWN_SECONDS * 1000) {
             const remainingSec = Math.ceil((RESEND_COOLDOWN_SECONDS * 1000 - (now - lastSent)) / 1000)
             return Response.json(
@@ -36,10 +36,10 @@ export async function resendOtp(req: PayloadRequest): Promise<Response> {
             collection: 'users',
             id: user.id,
             data: {
-                emailOtpHash: code,
-                emailOtpExpiresAt: expiresAt,
-                emailOtpAttempts: 0,
-                emailOtpLastSentAt: new Date(now).toISOString(),
+                email_otp_hash: code,
+                email_otp_expires_at: expiresAt,
+                email_otp_attempts: 0,
+                email_otp_last_sent_at: new Date(now).toISOString(),
             },
         })
 

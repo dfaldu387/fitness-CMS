@@ -12,7 +12,6 @@ export const login: PayloadHandler = async (req) => {
       )
     }
 
-    // 🔍 Find user
     const existing = await req.payload.find({
       collection: 'users',
       where: { email: { equals: email } },
@@ -28,12 +27,12 @@ export const login: PayloadHandler = async (req) => {
 
     const user = existing.docs[0]
 
-    if (!user._verified) {
-      return Response.json(
-        { success: false, message: 'Please verify OTP on your email before logging in.' },
-        { status: 401 }
-      )
-    }
+    // if (!user._verified) {
+    //   return Response.json(
+    //     { success: false, message: 'Please verify OTP on your email before logging in.' },
+    //     { status: 401 }
+    //   )
+    // }
 
     const loginRes = await req.payload.login({
       collection: 'users',

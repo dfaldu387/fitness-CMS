@@ -3,9 +3,19 @@ import type { PayloadHandler } from 'payload';
 export const dataCollection: PayloadHandler = async (req) => {
   try {
     const body = await req.json()
-    const { preferredName, gender, birthdate, location, email } = body
+    const {
+      email,
+      preferredName,
+      gender,
+      birthdate,
+      location,
+      height,
+      healthCondition,
+      allergies,
+      exerciseLimitation,
+      wellnessGoals,
+      dietaryRestrictions, } = body
 
-    // 1️⃣ Validate input
     if (!email) {
       return Response.json(
         { success: false, message: 'Email is required.' },
@@ -13,7 +23,7 @@ export const dataCollection: PayloadHandler = async (req) => {
       )
     }
 
-    // 🔎 Step 1: Find user by email in the 'users' collection
+    //  Find user by email in the 'users' collection
     const userExists = await req.payload.find({
       collection: 'users',
       where: { email: { equals: email } },
@@ -28,14 +38,12 @@ export const dataCollection: PayloadHandler = async (req) => {
 
     const userId = userExists.docs[0].id;
 
-    // 🔎 Step 2: Check if the profile exists for the user
+    // Check if the profile exists for the user
     const profileExists = await req.payload.find({
       collection: 'profiles',
       where: { user: { equals: userId } },
       limit: 1,
     });
-
-    console.log('Profile existence check:', profileExists);
 
     let profileData: any = {
       user: userId,
@@ -43,6 +51,12 @@ export const dataCollection: PayloadHandler = async (req) => {
       gender,
       birthdate,
       location,
+      height,
+      healthCondition,
+      allergies,
+      exerciseLimitation,
+      wellnessGoals,
+      dietaryRestrictions,
     };
 
     // ✅ If profile exists, update it with the new data
@@ -56,22 +70,22 @@ export const dataCollection: PayloadHandler = async (req) => {
         gender: gender ?? existingProfile.gender,
         birthdate: birthdate ?? existingProfile.birthdate,
         location: location ?? existingProfile.location,
+        height: height ?? existingProfile.height,
+        healthCondition: healthCondition ?? existingProfile.healthCondition,
+        allergies: allergies ?? existingProfile.allergies,
+        exerciseLimitation: exerciseLimitation ?? existingProfile.exerciseLimitation,
+        wellnessGoals: wellnessGoals ?? existingProfile.wellnessGoals,
+        dietaryRestrictions: dietaryRestrictions ?? existingProfile.dietaryRestrictions,
       };
-
-console.log('profileData>>>>>>>',profileData);
-
 
       // Update the existing profile
       const updatedProfile = await req.payload.update({
         collection: 'profiles',
-        id: existingProfile.id, // Use existing profile ID to update
+        id: existingProfile.id,
         data: profileData,
-        overrideAccess: true, // Ensure access rules are applied
-        user: req.user, // Keep track of who is updating
+        overrideAccess: true,
+        user: req.user,
       });
-
-      console.log('updatedProfile???????????',updatedProfile);
-      
 
       return Response.json(
         { message: 'Profile updated successfully', profile: updatedProfile },
@@ -79,15 +93,14 @@ console.log('profileData>>>>>>>',profileData);
       );
     }
 
-    // ✅ Step 3: If no profile exists, create a new profile
+    //  If no profile exists, create a new profile
     const newProfile = await req.payload.create({
       collection: 'profiles',
       data: profileData,
-      overrideAccess: true, // Ensure access rules are applied
-      user: req.user, // Track who is creating the profile
+      overrideAccess: true,
+      user: req.user,
     });
 
-    console.log('Created profile:', newProfile);
 
     return Response.json(
       { message: 'Profile created successfully', profile: newProfile },
@@ -95,9 +108,6 @@ console.log('profileData>>>>>>>',profileData);
     );
 
   } catch (err: any) {
-    // Log error for debugging
-    console.error('Error during profile creation or update:', err);
-
     return Response.json(
       { message: 'Internal server error', error: err?.message },
       { status: 500 }

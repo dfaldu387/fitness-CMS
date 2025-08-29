@@ -70,6 +70,9 @@ export interface Config {
     users: User;
     media: Media;
     profiles: Profile;
+    reminders: Reminder;
+    notificationsSetting: NotificationsSetting;
+    deviceSync: DeviceSync;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -79,6 +82,9 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     profiles: ProfilesSelect<false> | ProfilesSelect<true>;
+    reminders: RemindersSelect<false> | RemindersSelect<true>;
+    notificationsSetting: NotificationsSettingSelect<false> | NotificationsSettingSelect<true>;
+    deviceSync: DeviceSyncSelect<false> | DeviceSyncSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -126,10 +132,10 @@ export interface User {
   role: 'admin' | 'editor' | 'viewer';
   birthdate?: string | null;
   acceptedTerms?: boolean | null;
-  emailOtpHash?: string | null;
-  emailOtpExpiresAt?: string | null;
-  emailOtpAttempts?: number | null;
-  emailOtpLastSentAt?: string | null;
+  email_otp_hash?: string | null;
+  email_otp_expires_at?: string | null;
+  email_otp_attempts?: number | null;
+  email_otp_last_sent_at?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -180,15 +186,61 @@ export interface Profile {
   gender?: ('male' | 'female') | null;
   birthdate?: string | null;
   location?: string | null;
-  extra?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
+  height?: string | null;
+  healthCondition?: string | null;
+  allergies?: string | null;
+  exerciseLimitation?: string | null;
+  wellnessGoals?: string | null;
+  dietaryRestrictions?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reminders".
+ */
+export interface Reminder {
+  id: number;
+  user: number | User;
+  haiReminders?: boolean | null;
+  coachingReminders?: boolean | null;
+  s11Reminders?: boolean | null;
+  drinkWater?: boolean | null;
+  standMove?: boolean | null;
+  sleep?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "notificationsSetting".
+ */
+export interface NotificationsSetting {
+  id: number;
+  user: number | User;
+  updatesOrNews?: boolean | null;
+  haiAlert?: boolean | null;
+  exerciseAlerts?: boolean | null;
+  loreAlerts?: boolean | null;
+  newProductAlerts?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "deviceSync".
+ */
+export interface DeviceSync {
+  id: number;
+  user: number | User;
+  syncIphone?: boolean | null;
+  syncAppleWatch?: boolean | null;
+  syncAppleHealthKit?: boolean | null;
+  syncAndroid?: boolean | null;
+  syncAndroidFit?: boolean | null;
+  syncSamsungSmartWatch?: boolean | null;
+  syncFitbit?: boolean | null;
+  syncOuraRing?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -210,6 +262,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'profiles';
         value: number | Profile;
+      } | null)
+    | ({
+        relationTo: 'reminders';
+        value: number | Reminder;
+      } | null)
+    | ({
+        relationTo: 'notificationsSetting';
+        value: number | NotificationsSetting;
+      } | null)
+    | ({
+        relationTo: 'deviceSync';
+        value: number | DeviceSync;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -263,10 +327,11 @@ export interface UsersSelect<T extends boolean = true> {
   role?: T;
   birthdate?: T;
   acceptedTerms?: T;
-  emailOtpHash?: T;
-  emailOtpExpiresAt?: T;
-  emailOtpAttempts?: T;
-  emailOtpLastSentAt?: T;
+  password?: T;
+  email_otp_hash?: T;
+  email_otp_expires_at?: T;
+  email_otp_attempts?: T;
+  email_otp_last_sent_at?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -314,7 +379,58 @@ export interface ProfilesSelect<T extends boolean = true> {
   gender?: T;
   birthdate?: T;
   location?: T;
-  extra?: T;
+  height?: T;
+  healthCondition?: T;
+  allergies?: T;
+  exerciseLimitation?: T;
+  wellnessGoals?: T;
+  dietaryRestrictions?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reminders_select".
+ */
+export interface RemindersSelect<T extends boolean = true> {
+  user?: T;
+  haiReminders?: T;
+  coachingReminders?: T;
+  s11Reminders?: T;
+  drinkWater?: T;
+  standMove?: T;
+  sleep?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "notificationsSetting_select".
+ */
+export interface NotificationsSettingSelect<T extends boolean = true> {
+  user?: T;
+  updatesOrNews?: T;
+  haiAlert?: T;
+  exerciseAlerts?: T;
+  loreAlerts?: T;
+  newProductAlerts?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "deviceSync_select".
+ */
+export interface DeviceSyncSelect<T extends boolean = true> {
+  user?: T;
+  syncIphone?: T;
+  syncAppleWatch?: T;
+  syncAppleHealthKit?: T;
+  syncAndroid?: T;
+  syncAndroidFit?: T;
+  syncSamsungSmartWatch?: T;
+  syncFitbit?: T;
+  syncOuraRing?: T;
   updatedAt?: T;
   createdAt?: T;
 }
