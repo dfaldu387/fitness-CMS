@@ -73,6 +73,7 @@ export interface Config {
     reminders: Reminder;
     notificationsSetting: NotificationsSetting;
     deviceSync: DeviceSync;
+    newsDashboard: NewsDashboard;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -85,6 +86,7 @@ export interface Config {
     reminders: RemindersSelect<false> | RemindersSelect<true>;
     notificationsSetting: NotificationsSettingSelect<false> | NotificationsSettingSelect<true>;
     deviceSync: DeviceSyncSelect<false> | DeviceSyncSelect<true>;
+    newsDashboard: NewsDashboardSelect<false> | NewsDashboardSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -246,6 +248,21 @@ export interface DeviceSync {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsDashboard".
+ */
+export interface NewsDashboard {
+  id: number;
+  user: number | User;
+  type: 'updates' | 'news' | 'wellness';
+  content: string;
+  details?: string | null;
+  date: string;
+  isFavourite?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -274,6 +291,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'deviceSync';
         value: number | DeviceSync;
+      } | null)
+    | ({
+        relationTo: 'newsDashboard';
+        value: number | NewsDashboard;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -431,6 +452,20 @@ export interface DeviceSyncSelect<T extends boolean = true> {
   syncSamsungSmartWatch?: T;
   syncFitbit?: T;
   syncOuraRing?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsDashboard_select".
+ */
+export interface NewsDashboardSelect<T extends boolean = true> {
+  user?: T;
+  type?: T;
+  content?: T;
+  details?: T;
+  date?: T;
+  isFavourite?: T;
   updatedAt?: T;
   createdAt?: T;
 }

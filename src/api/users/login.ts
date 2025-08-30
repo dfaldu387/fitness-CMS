@@ -1,4 +1,5 @@
 import type { PayloadHandler } from 'payload'
+import bcrypt from 'bcryptjs';
 
 export const login: PayloadHandler = async (req) => {
   try {
@@ -27,12 +28,37 @@ export const login: PayloadHandler = async (req) => {
 
     const user = existing.docs[0]
 
-    // if (!user._verified) {
-    //   return Response.json(
-    //     { success: false, message: 'Please verify OTP on your email before logging in.' },
-    //     { status: 401 }
-    //   )
-    // }
+    console.log('user00000000000', user);
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedOldPassword = await bcrypt.hash(user?.password, 10);
+    console.log('hashedPassword?????', hashedPassword);
+    console.log('hashedOldPassword?????', hashedOldPassword);
+
+
+    // const isMatch = await bcrypt.compare(user.password, hashedPassword);
+
+    if (isMatch) {
+      console.log("✅ Passwords match!");
+    } else {
+      console.log("❌ Invalid password");
+    }
+
+    if (!user._verified) {
+      return Response.json(
+        { success: false, message: 'Please verify OTP on your email before logging in.' },
+        { status: 401 }
+      )
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return Response.json(
+        { success: false, message: 'Invalid password.' },
+        { status: 401 }
+      );
+    }
 
     const loginRes = await req.payload.login({
       collection: 'users',
@@ -41,12 +67,13 @@ export const login: PayloadHandler = async (req) => {
 
     return Response.json({
       success: true,
-      message: 'Login successful',
+      message: 'Login successful!!!',
       user: {
         email: user.email,
         name: user.name,
         role: user.role,
-        userId: user.userId
+        userId: user.userId,
+        password: user.password
       },
       token: loginRes.token,
     })

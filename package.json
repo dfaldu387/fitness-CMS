@@ -18,13 +18,14 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {
-    "@payloadcms/db-sqlite": "3.53.0",
+    "@payloadcms/db-sqlite": "^3.53.0",
     "@payloadcms/email-nodemailer": "^3.53.0",
     "@payloadcms/email-resend": "^3.53.0",
     "@payloadcms/next": "3.53.0",
     "@payloadcms/payload-cloud": "3.53.0",
     "@payloadcms/richtext-lexical": "3.53.0",
     "@payloadcms/ui": "3.53.0",
+    "bcryptjs": "^3.0.2",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
     "graphql": "^16.8.1",

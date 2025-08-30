@@ -1,12 +1,13 @@
 import type { PayloadHandler } from 'payload';
-import bcrypt from 'bcryptjs';
+import { getPayloadHMR } from '@payloadcms/next/utilities';
+import config from '@/payload.config';
 
 export const updatePassword: PayloadHandler = async (req) => {
   try {
+    const payload = await getPayloadHMR({ config });
     const body = await req.json();
     const { userId, oldPassword, password, confirmPassword } = body;
 
-    // Validate fields
     if (!userId || !oldPassword || !password || !confirmPassword) {
       return Response.json({ success: false, message: 'All fields are required.' }, { status: 400 });
     }
@@ -15,12 +16,8 @@ export const updatePassword: PayloadHandler = async (req) => {
       return Response.json({ success: false, message: 'Passwords do not match.' }, { status: 400 });
     }
 
-    if (!req.user) {
-      return Response.json({ success: false, message: 'Unauthorized.' }, { status: 401 });
-    }
-
-    // Fetch user with password
-    const userRes = await req.payload.find({
+    // Fetch user
+    const userRes = await payload.find({
       collection: 'users',
       where: { userId: { equals: userId } },
       limit: 1,
@@ -28,32 +25,40 @@ export const updatePassword: PayloadHandler = async (req) => {
       fields: ['id', 'password'],
     });
 
-    if (!userRes.docs || userRes.docs.length === 0) {
+    if (!userRes.docs?.length) {
       return Response.json({ success: false, message: 'User not found.' }, { status: 404 });
     }
 
     const user = userRes.docs[0];
 
+    console.log('user***********', user);
+
     if (!user.password) {
-      return Response.json({ success: false, message: 'User password not set.' }, { status: 400 });
+      return Response.json({ success: false, message: 'User has no password set.' }, { status: 400 });
     }
 
-    // Compare old password
-    const isOldPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
+    // Verify old password
+    const isOldPasswordCorrect = await payload.auth.verifyUserPassword({
+      collection: 'users',
+      user,
+      password: oldPassword,
+    });
+
     if (!isOldPasswordCorrect) {
       return Response.json({ success: false, message: 'Old password is incorrect.' }, { status: 400 });
     }
 
-    // Update password (Payload will hash automatically)
-    await req.payload.update({
+    // Update password (Payload auto-hashes)
+    await payload.update({
       collection: 'users',
       id: user.id,
       data: { password },
       overrideAccess: true,
     });
 
-    return Response.json({ success: true, message: 'Password updated successfully.' }, { status: 200 });
+    return Response.json({ success: true, message: 'Password updated successfully.' });
   } catch (err: any) {
+    console.error(err);
     return Response.json({ success: false, message: 'Internal server error', error: err.message }, { status: 500 });
   }
 };

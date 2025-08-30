@@ -98,31 +98,31 @@ const Users: CollectionConfig = {
       },
     ],
 
- beforeDelete: [
-            async ({ id, req }) => {
-                req.payload.logger.info(`Attempting to delete related data for user ID: ${id}`);
+    beforeDelete: [
+      async ({ id, req }) => {
+        req.payload.logger.info(`Attempting to delete related data for user ID: ${id}`);
 
-                try {
-                    // Delete related notificationsSetting
-                    const notificationsDeleted = await req.payload.delete({
-                        collection: 'notificationsSetting',
-                        where: { user: { equals: id } },
-                    });
-                    req.payload.logger.info(`Deleted ${notificationsDeleted.docsDeleted} notificationsSetting for user ${id}`);
+        try {
+          // Delete related notificationsSetting
+          const notificationsDeleted = await req.payload.delete({
+            collection: 'notificationsSetting',
+            where: { user: { equals: id } },
+          });
+          // req.payload.logger.info(`Deleted ${notificationsDeleted.docsDeleted} notificationsSetting for user ${id}`);
 
-                    // Delete related deviceSync
-                    const deviceSyncDeleted = await req.payload.delete({
-                        collection: 'deviceSync',
-                        where: { user: { equals: id } },
-                    });
-                    req.payload.logger.info(`Deleted ${deviceSyncDeleted.docsDeleted} deviceSync for user ${id}`);
+          // Delete related deviceSync
+          const deviceSyncDeleted = await req.payload.delete({
+            collection: 'deviceSync',
+            where: { user: { equals: id } },
+          });
+          // req.payload.logger.info(`Deleted ${deviceSyncDeleted.docsDeleted} deviceSync for user ${id}`);
 
-                } catch (err) {
-                    // Log the error but do not block deletion
-                    req.payload.logger.error(`Failed to delete related data for user ${id}: ${err}`);
-                }
-            },
-        ],
+        } catch (err) {
+          // Log the error but do not block deletion
+          req.payload.logger.error(`Failed to delete related data for user ${id}: ${err}`);
+        }
+      },
+    ],
 
   },
 

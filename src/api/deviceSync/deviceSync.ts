@@ -24,7 +24,6 @@ export const getDeviceSync: PayloadHandler = async (req) => {
             { status: 200 }
         )
     } catch (err: any) {
-        console.error('Error in getDeviceSync:', err)
         return Response.json(
             { success: false, message: 'Internal server error', error: err.message },
             { status: 500 }

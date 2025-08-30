@@ -31,7 +31,6 @@ export const getNotificationsSetting: PayloadHandler = async (req) => {
       { status: 200 }
     )
   } catch (err: any) {
-    console.error('Error in getNotificationsSetting:', err)
     return Response.json(
       { success: false, message: 'Internal server error', error: err.message },
       { status: 500 }
@@ -80,7 +79,6 @@ export const updateNotificationsSettings: PayloadHandler = async (req) => {
       { status: 200 }
     )
   } catch (err: any) {
-    console.error('Error in updateNotificationsSettings:', err)
     return Response.json(
       { success: false, message: 'Internal server error', error: err.message },
       { status: 500 }

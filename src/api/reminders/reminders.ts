@@ -34,7 +34,6 @@ export const getReminders: PayloadHandler = async (req) => {
       { status: 200 }
     )
   } catch (err: any) {
-    console.error('Error in getReminders:', err)
     return Response.json(
       {
         success: false,
@@ -90,7 +89,6 @@ export const updateReminders: PayloadHandler = async (req) => {
       { status: 200 }
     )
   } catch (err: any) {
-    console.error('Error in updateReminders:', err)
     return Response.json(
       { success: false, message: 'Internal server error', error: err.message },
       { status: 500 }

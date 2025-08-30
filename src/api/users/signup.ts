@@ -1,5 +1,4 @@
 import type { PayloadHandler } from 'payload'
-import jwt from 'jsonwebtoken'
 
 export const signup: PayloadHandler = async (req) => {
     try {
