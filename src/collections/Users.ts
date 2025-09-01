@@ -32,7 +32,6 @@ const Users: CollectionConfig = {
     { name: 'email', type: 'email', required: true, unique: true, },
     { name: 'birthdate', type: 'date' },
     { name: 'acceptedTerms', type: 'checkbox' },
-    { name: 'password', type: 'password', admin: { readOnly: true } },
 
     // OTP-related hidden fields
     { name: 'email_otp_hash', type: 'text', admin: { hidden: true } },
@@ -123,7 +122,6 @@ const Users: CollectionConfig = {
         }
       },
     ],
-
   },
 
   endpoints: customUserEndpoints,

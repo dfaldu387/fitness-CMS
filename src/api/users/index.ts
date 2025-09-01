@@ -8,6 +8,7 @@ import { verifyOtp } from './verify-otp'
 import { myProfile } from './my-profile'
 import { updateAccountInfo } from './update-accountinfo'
 import { updatePassword } from './update-password'
+import { forgotPassword } from './forgot-password'
 
 export const customUserEndpoints: { path: string; method: any; handler: PayloadHandler }[] = [
     { path: '/custom-signup', method: 'post', handler: signup },
@@ -18,4 +19,5 @@ export const customUserEndpoints: { path: string; method: any; handler: PayloadH
     { path: '/my-profile', method: 'get', handler: myProfile },
     { path: '/update-accountinfo', method: 'patch', handler: updateAccountInfo },
     { path: '/update-password', method: 'patch', handler: updatePassword },
+    { path: '/forgot-password', method: 'post', handler: forgotPassword },
 ]

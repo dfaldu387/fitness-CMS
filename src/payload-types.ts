@@ -348,7 +348,6 @@ export interface UsersSelect<T extends boolean = true> {
   role?: T;
   birthdate?: T;
   acceptedTerms?: T;
-  password?: T;
   email_otp_hash?: T;
   email_otp_expires_at?: T;
   email_otp_attempts?: T;

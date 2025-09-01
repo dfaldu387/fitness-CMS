@@ -45,21 +45,6 @@ export const signup: PayloadHandler = async (req) => {
             },
         })
 
-        // const SIGN_SECRET = process.env.PAYLOAD_SECRET || process.env.JWT_SECRET
-        // if (!SIGN_SECRET) {
-        //     return Response.json(
-        //         { success: false, message: 'Server misconfiguration: missing JWT secret' },
-        //         { status: 500 })
-        // }
-
-        // const tokenPayload = {
-        //     id: newUser.id,
-        //     collection: 'users',
-        //     email: newUser.email,
-        // }
-        // const expiresIn = process.env.SIGNUP_TOKEN_EXPIRES_IN || '7d'
-        // const token = jwt.sign(tokenPayload, SIGN_SECRET, { expiresIn })
-
         return Response.json({
             success: true,
             message: 'Signup successful. Please verify your email with OTP before logging in.',
@@ -69,8 +54,6 @@ export const signup: PayloadHandler = async (req) => {
                 email: newUser.email,
                 verified: newUser._verified,
             },
-            // token
-
         })
     } catch (err: any) {
         return Response.json(
