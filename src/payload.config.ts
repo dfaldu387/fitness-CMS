@@ -9,6 +9,11 @@ import sharp from 'sharp'
 import Users from './collections/Users'
 import { Media } from './collections/Media'
 import { resendAdapter } from '@payloadcms/email-resend'
+import Reminders from './collections/Reminder'
+import NotificationsSetting from './collections/NotificationsSetting'
+import DeviceSync from './collections/DeviceSync'
+import NewsDashboard from './collections/NewsDashboard'
+import DataCollection from './collections/Profile'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -21,7 +26,15 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media],
+  collections: [
+    Users,
+    Media,
+    DataCollection,
+    Reminders,
+    NotificationsSetting,
+    DeviceSync,
+    NewsDashboard
+  ],
   email: resendAdapter({
     defaultFromAddress: process.env.EMAIL_FROM_ADDRESS!,
     defaultFromName: process.env.EMAIL_FROM_NAME!,

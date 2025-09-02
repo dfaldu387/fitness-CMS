@@ -12,13 +12,14 @@ export async function sendOtp(req: PayloadRequest): Promise<Response> {
             where: { email: { equals: email } },
             limit: 1,
         })
+
         if (!found.docs.length) return Response.json({ ok: true }, { status: 200 })
 
         const user = found.docs[0]
         const now = Date.now()
 
         // Cooldown
-        const lastSent = user.emailOtpLastSentAt ? new Date(user.emailOtpLastSentAt).getTime() : 0
+        const lastSent = user.email_otp_last_sent_at ? new Date(user.email_otp_last_sent_at).getTime() : 0
         if (lastSent) {
             const elapsed = now - lastSent
             const cooldownMs = RESEND_COOLDOWN_SECONDS * 1000
@@ -39,14 +40,12 @@ export async function sendOtp(req: PayloadRequest): Promise<Response> {
             collection: 'users',
             id: user.id,
             data: {
-                emailOtpHash: code, // hash in prod
-                emailOtpExpiresAt: expiresAt,
-                emailOtpAttempts: 0,
-                emailOtpLastSentAt: new Date(now).toISOString(),
+                email_otp_hash: code, // hash in prod
+                email_otp_expires_at: expiresAt,
+                email_otp_attempts: 0,
+                email_otp_last_sent_at: new Date(now).toISOString(),
             },
         })
-
-        console.log(`OTP for ${email}: ${code}`)
 
         await req.payload.sendEmail?.({
             to: email,
@@ -55,7 +54,7 @@ export async function sendOtp(req: PayloadRequest): Promise<Response> {
         })
 
         const isProd = process.env.NODE_ENV === 'production'
-        return Response.json(isProd ? { ok: true } : { ok: true, code }, { status: 200 })
+        return Response.json(isProd ? { message: true } : { message: true, code }, { status: 200 })
     } catch (err) {
         req.payload.logger.error(err)
         return Response.json({ message: 'Failed to send code' }, { status: 500 })
