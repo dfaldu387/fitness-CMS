@@ -4,7 +4,11 @@ import { v4 as uuidv4 } from 'uuid'
 
 const Users: CollectionConfig = {
   slug: 'users',
-  auth: { verify: true, maxLoginAttempts: 5 },
+  auth: {
+    verify: true,
+    maxLoginAttempts: 5,
+    sendVerificationEmail: false,
+  },
 
   admin: {
     defaultColumns: ['id', 'password', 'userId', 'birthdate', 'email', 'name', 'role', 'updatedAt', '_verified'],
@@ -30,7 +34,6 @@ const Users: CollectionConfig = {
       access: { update: ({ req }) => req.user?.role === 'admin' }
     },
     { name: 'email', type: 'email', required: true, unique: true, },
-    { name: 'birthdate', type: 'date' },
     { name: 'acceptedTerms', type: 'checkbox' },
 
     // OTP-related hidden fields

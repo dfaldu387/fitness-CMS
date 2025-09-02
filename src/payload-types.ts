@@ -132,7 +132,6 @@ export interface User {
   userId?: string | null;
   name: string;
   role: 'admin' | 'editor' | 'viewer';
-  birthdate?: string | null;
   acceptedTerms?: boolean | null;
   email_otp_hash?: string | null;
   email_otp_expires_at?: string | null;
@@ -346,7 +345,6 @@ export interface UsersSelect<T extends boolean = true> {
   userId?: T;
   name?: T;
   role?: T;
-  birthdate?: T;
   acceptedTerms?: T;
   email_otp_hash?: T;
   email_otp_expires_at?: T;

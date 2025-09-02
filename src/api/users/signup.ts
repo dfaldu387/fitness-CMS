@@ -3,7 +3,7 @@ import type { PayloadHandler } from 'payload'
 export const signup: PayloadHandler = async (req) => {
     try {
         const body = await req.json()
-        const { email, password, name, birthdate, acceptedTerms } = body
+        const { email, password, name, acceptedTerms } = body
 
         //  Validate input
         if (!email || !password || !name) {
@@ -38,11 +38,12 @@ export const signup: PayloadHandler = async (req) => {
                 email,
                 password,
                 name,
-                birthdate,
                 acceptedTerms,
                 _verified: false,
                 email_otp_attempts: 0,
             },
+            overrideAccess: true,
+            disableVerificationEmail: true,
         })
 
         return Response.json({

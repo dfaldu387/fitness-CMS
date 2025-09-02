@@ -5,7 +5,9 @@ export async function sendOtp(req: PayloadRequest): Promise<Response> {
     try {
         const body = await (req as any).json?.()
         const email = (body?.email as string | undefined)?.toLowerCase()
-        if (!email) return Response.json({ message: 'Email is required' }, { status: 400 })
+        if (!email) return Response.json(
+            { message: 'Email is required' },
+            { status: 400 })
 
         const found = await req.payload.find({
             collection: 'users',
@@ -13,7 +15,10 @@ export async function sendOtp(req: PayloadRequest): Promise<Response> {
             limit: 1,
         })
 
-        if (!found.docs.length) return Response.json({ ok: true }, { status: 200 })
+        if (!found.docs.length) return Response.json({
+            status: 200,
+            message: 'Email not registered, nothing to send.'
+        })
 
         const user = found.docs[0]
         const now = Date.now()
