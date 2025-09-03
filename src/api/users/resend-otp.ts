@@ -1,4 +1,3 @@
-// src/api/users/resend-otp.ts
 import type { PayloadRequest } from 'payload'
 import { gen4, RESEND_COOLDOWN_SECONDS, fmt } from '../../lib/otp'
 
@@ -6,14 +5,23 @@ export async function resendOtp(req: PayloadRequest): Promise<Response> {
     try {
         const body = await (req as any).json?.()
         const email = (body?.email as string | undefined)?.toLowerCase()
-        if (!email) return Response.json({ message: 'Email is required' }, { status: 400 })
+        if (!email) return Response.json(
+            { status: 400, success: false, message: 'Email is required' },
+            { status: 400 }
+        )
 
         const found = await req.payload.find({
             collection: 'users',
             where: { email: { equals: email } },
             limit: 1,
         })
-        if (!found.docs.length) return Response.json({ ok: true }, { status: 200 })
+
+        if (!found.docs.length) {
+            return Response.json(
+                { status: 200, success: true, message: 'No account found for this email' },
+                { status: 200 }
+            )
+        }
 
         const user = found.docs[0]
         const now = Date.now()
@@ -23,7 +31,12 @@ export async function resendOtp(req: PayloadRequest): Promise<Response> {
         if (lastSent && now - lastSent < RESEND_COOLDOWN_SECONDS * 1000) {
             const remainingSec = Math.ceil((RESEND_COOLDOWN_SECONDS * 1000 - (now - lastSent)) / 1000)
             return Response.json(
-                { message: `Please try again in ${fmt(remainingSec)}.`, secondsRemaining: remainingSec },
+                {
+                    status: 429,
+                    success: false,
+                    message: `Please try again in ${fmt(remainingSec)}.`,
+                    secondsRemaining: remainingSec
+                },
                 { status: 429 },
             )
         }
@@ -50,9 +63,21 @@ export async function resendOtp(req: PayloadRequest): Promise<Response> {
         })
 
         const isProd = process.env.NODE_ENV === 'production'
-        return Response.json(isProd ? { message: true } : { message: true, code }, { status: 200 })
+        return Response.json(
+            {
+                status: 200,
+                success: true,
+                message: 'OTP resent successfully',
+                ...(isProd ? {} : { code }),
+            },
+            { status: 200 }
+        )
     } catch (err) {
         req.payload.logger.error(err)
-        return Response.json({ message: 'Failed to resend code' }, { status: 500 })
+        return Response.json({
+            status: 500,
+            success: false,
+            message: 'Failed to resend code'
+        }, { status: 500 })
     }
 }
